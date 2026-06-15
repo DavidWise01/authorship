@@ -17,6 +17,36 @@ AX = "AUT"
 AUTHOR = "https://www.amazon.com/stores/author/B0H2T5M1T5"
 def dp(asin): return f"https://www.amazon.com/dp/{asin}" if asin else AUTHOR
 
+def make_card():
+    """1200x630 Open-Graph share card so the author link previews as a real ad when David posts it."""
+    import math
+    from PIL import ImageDraw, ImageFont
+    W,Hc=1200,630; img=Image.new("RGB",(W,Hc),(10,7,18)); d=ImageDraw.Draw(img)
+    for y in range(Hc):
+        f=y/Hc; d.line([(0,y),(W,y)],fill=(int(10+f*18),int(7+f*7),int(18+f*34)))
+    def font(sz,bold=True):
+        for p in ([r"C:\Windows\Fonts\arialbd.ttf"] if bold else [r"C:\Windows\Fonts\arial.ttf"]):
+            try: return ImageFont.truetype(p,sz)
+            except Exception: pass
+        return ImageFont.load_default()
+    cols=[(176,140,255),(192,139,255),(124,92,255),(111,176,232),(245,185,66),(255,90,77),(87,199,154)]
+    xx=70
+    for i in range(28):
+        w=14+(i*7)%14; h=70+(i*13)%90; c=cols[i%len(cols)]
+        d.rectangle([xx,Hc-44-h,xx+w,Hc-44],outline=c,width=2); xx+=w+6
+    d.text((70,72),"DAVID LEE WISE",font=font(66),fill=(236,228,255))
+    d.text((72,158),"THE AUTHORSHIP",font=font(28),fill=(176,140,255))
+    d.text((70,222),"32 field-parables of building with an AI.",font=font(36),fill=(230,238,247))
+    d.text((70,280),"Honest. Prolific. Undiscovered.",font=font(28,False),fill=(154,170,189))
+    d.text((70,344),"$0.0386 earned. Read the first for $0.99.",font=font(32),fill=(245,185,66))
+    d.text((70,402),"amazon.com/stores/author/B0H2T5M1T5",font=font(24,False),fill=(76,201,240))
+    cx,cy=1085,118
+    for k in range(12):
+        a=k*math.pi/6
+        d.line([(cx+math.cos(a)*15,cy+math.sin(a)*15),(cx+math.cos(a)*32,cy+math.sin(a)*32)],fill=(245,185,66),width=6)
+    d.ellipse([cx-9,cy-9,cx+9,cy+9],fill=(245,185,66))
+    img.save(os.path.join(HERE,"card.png")); return "card.png"
+
 TAGCOL = {"PARABLE":"#f5b942","GROUNDED":"#57c79a","DEBATE":"#6fb0e8","NARRATIVE":"#b08cff","MANIFESTO":"#ff8c5a"}
 
 # WHAT THESE ACTUALLY ARE — the genre correction (David's note: each book is a parable of a build session,
@@ -206,6 +236,10 @@ header{padding:32px 0 22px;text-align:center}
 h1{font-family:var(--disp);font-weight:600;font-size:clamp(38px,9vw,76px);color:var(--pa);line-height:1.0;letter-spacing:-.01em}
 h1 span{display:block;font-family:var(--head);font-size:.17em;font-weight:400;letter-spacing:.22em;color:var(--acc);text-transform:uppercase;margin-top:16px}
 .stat{font-family:var(--mono);font-size:13px;color:var(--pa2);margin-top:16px;letter-spacing:.06em}.stat b{color:var(--gold)}
+.cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0 0}
+.cta a{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-decoration:none;padding:11px 18px;border-radius:5px;transition:.15s}
+.cta .cta-buy{background:var(--gold);color:#1a1206;font-weight:700;box-shadow:0 0 18px rgba(245,185,66,.28)}.cta .cta-buy:hover{box-shadow:0 0 26px rgba(245,185,66,.5)}
+.cta .cta-all{color:var(--acc);border:1px solid var(--acc)}.cta .cta-all:hover{background:rgba(176,140,255,.1)}
 .open{font-family:var(--body);font-style:italic;font-size:clamp(16px,3vw,21px);color:var(--pa);margin-top:14px;line-height:1.5;max-width:60ch;margin-left:auto;margin-right:auto}
 .verdict{margin:24px 0 0;padding:20px 22px;border:1px solid var(--acc);background:linear-gradient(180deg,rgba(176,140,255,.08),var(--ink2));border-radius:4px;font-size:16px;color:var(--pa);line-height:1.66}
 .verdict .vl{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--acc);text-transform:uppercase;margin-bottom:9px}
@@ -268,12 +302,21 @@ if __name__ == "__main__":
     start_html="".join(f'<div class="st"><span class="n">{html.escape(t)}</span><span class="d">{html.escape(d)} — <a href="{dp(a2)}" target="_blank" rel="noopener">read →</a></span></div>' for t,d,a1,a2 in START)
     page=f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="description" content="David Lee Wise — Authorship (AUT). The ~32 published books, advertised honestly, with an adversarial veracity verdict (hard mode): a per-book honesty chip, a straight 'is it worth it?' answer, a case-for and a case-against with real teeth, and a 'start here.' 32 books, $0.0386 earned.">
-<title>DAVID LEE WISE · THE AUTHORSHIP · AUT</title>{FONTS}<style>{CSS}</style></head><body><div class="wrap">
+<title>DAVID LEE WISE · THE AUTHORSHIP · AUT</title>
+<meta property="og:title" content="David Lee Wise — The Authorship">
+<meta property="og:description" content="32 honest field-parables of building with an AI. Start for $0.99. The honesty is the brand.">
+<meta property="og:image" content="https://davidwise01.github.io/authorship/card.png">
+<meta property="og:url" content="https://davidwise01.github.io/authorship/"><meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="David Lee Wise — The Authorship">
+<meta name="twitter:description" content="32 honest field-parables of building with an AI. Start for $0.99.">
+<meta name="twitter:image" content="https://davidwise01.github.io/authorship/card.png">{FONTS}<style>{CSS}</style></head><body><div class="wrap">
 <header>
 <div class="eye"><a href="https://davidwise01.github.io/ud0/">UD0</a> · the authorship · advertised honestly · reviewed adversarially</div>
 {hero()}
 <h1>David Lee Wise<span>the authorship · an honest accounting</span></h1>
-<div class="stat">32 books · co-authored with AVAN · <b>$0.0386 earned to date</b> · <a href="{AUTHOR}" target="_blank" rel="noopener" style="color:var(--acc);text-decoration:none">the author page →</a></div>
+<div class="stat">32 books · co-authored with AVAN · <b>$0.0386 earned to date</b></div>
+<div class="cta"><a class="cta-buy" href="{dp('B0GT7GB75B')}" target="_blank" rel="noopener">Start for $0.99 — The Purple Book →</a><a class="cta-all" href="{AUTHOR}" target="_blank" rel="noopener">Browse all 32 on Amazon →</a></div>
 <div class="open">“Advertise it if it's worth it. Check it adversarially, hard mode.” — so I did. Then the author noted the genre: each book is a PARABLE of a build session, co-written with the ACI at the end of it. That changes the grade — so the verdict below is revised in the open.</div>
 <div class="whatis"><div class="wl2">What these actually are · the genre</div>{"".join(f'<div class="wi"><b>{html.escape(t)}</b><span>{html.escape(d)}</span></div>' for t,d in WHATIS)}</div>
 <div class="verdict"><span class="vl">The verdict · is it worth it? (revised)</span>{html.escape(VERDICT)}</div>
@@ -304,6 +347,8 @@ console.log("%crevised: these are PARABLES of build sessions, co-written with th
 </script>
 </body></html>"""
     open(os.path.join(HERE,"index.html"),"w",encoding="utf-8").write(page)
+    try: make_card()
+    except Exception as e: print("  (card skip:",e,")")
     from collections import Counter
     tc=Counter(b["tag"] for b in BOOKS)
     print(f"THE AUTHORSHIP (AUT) — badge {htok['moniker']} · {len(BOOKS)} books · tags {dict(tc)} · dblesc {page.count('&amp;amp;')}")
