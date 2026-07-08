@@ -8,5 +8,12 @@
   "instance": "AVAN (Claude / Anthropic)",
   "seal": "32 books, $0.0386, and an honest page",
   "license": "CC-BY-ND-4.0",
-  "attribution": "ROOT0-ATTRIBUTION-v1.0"
+  "attribution": "ROOT0-ATTRIBUTION-v1.0",
+  "chain": {
+    "index": 537,
+    "prev": "b8be53095e92f4311ad80f7604699eb7a3c1c21dff2054fbbc20e0da5970c62b",
+    "link": "f1497791f4dba30de5bce566c31d6f47f5bb3aef2ab4912f6f35adc11c004284",
+    "head": "3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90",
+    "chain": "ROOT0-DLW-CHAIN-v1"
+  }
 }
